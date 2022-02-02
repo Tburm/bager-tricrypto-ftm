@@ -55,6 +55,8 @@ def test_is_profitable(vault, strategy, want, randomUser, deployer):
 def test_is_acceptable_apr(vault, strategy, want, keeper, deployer):
     snap = SnapshotManager(vault, strategy, "StrategySnapshot")
 
+    settKeeper = accounts.at(vault.keeper(), force=True)
+
     # Deposit
     assert want.balanceOf(deployer) > 0
     depositAmount = int(want.balanceOf(deployer) * 0.8)
@@ -64,7 +66,11 @@ def test_is_acceptable_apr(vault, strategy, want, keeper, deployer):
     snap.settDeposit(depositAmount, {"from": deployer})
 
     # Earn
-    snap.settEarn({"from": keeper})
+    snap.settEarn({"from": settKeeper})
+
+    # wait and earn some interest
+    chain.sleep(60*60*24)
+    chain.mine(1)
 
     # Harvest
     strategy.harvest({"from": keeper})

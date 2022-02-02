@@ -11,6 +11,7 @@ class Network(IntEnum):
     Forknet = 1337
     BSC = 56
     Polygon = 137
+    Fantom = 250
     Hardhat = 31337
     Arbitrum = 42161
 
@@ -24,6 +25,7 @@ MULTICALL_ADDRESSES = {
     Network.Forknet: "0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441",
     Network.BSC: "0xec8c00da6ce45341fb8c31653b598ca0d8251804",
     Network.Polygon: "0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507",
+    Network.Fantom: "0xb828C456600857abd4ed6C32FAcc607bD0464F4F",
     Network.Arbitrum: "0x7A7443F8c577d537f1d8cD4a629d40a3148Dd7ee",
     Network.Hardhat: "0x7A7443F8c577d537f1d8cD4a629d40a3148Dd7ee",
 }
