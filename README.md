@@ -16,7 +16,9 @@ At time of writing (2/9/2022):
 Based on these returns and the benefit of autocompounding, this vault should yield >35% APY until the rewards are diluted from greater deposits.
 
 ### Strategy Overview
-* User deposits wBTC to tricrypto pool on [Curve](https://ftm.curve.fi/)
+At a high level, this strategy is identical to the existing [WBTC-renWBTC](https://docs.badger.com/badger-finance/setts/sett-user-guides-polygon/polygon-amwbtc-renwbtc) strategy on Polygon. The difference is the use of the tricrypto pool, which exposes new risks. Depositors are exposed to fluctuations in the prices of fUSDT, ETH, and WBTC.
+
+* User deposits wBTC, fUSDT, or WETH to the tricrypto pool on [Curve](https://ftm.curve.fi/)
 * User deposits tricrypto LP tokens to Vault
 * Strategy deposits tricrypto LP tokens to the reward gauge
 * Strategy claims staking rewards in CRV and wFTM
