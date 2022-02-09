@@ -11,8 +11,8 @@ import {IERC20Upgradeable} from "./interfaces/IERC20Upgradeable.sol";
 
 contract MyStrategy is BaseStrategy {
 // address public want; // Inherited from BaseStrategy
-    address public lpComponent = 0x58e57cA18B7A47112b877E31929798Cd3D703b0f; // Token we provide liquidity with
-    address public reward = 0x1E4F97b9f9F913c46F1632781732927B9019C68b; // Token we farm and swap to want / lpComponent
+    // address public lpComponent = 0x58e57cA18B7A47112b877E31929798Cd3D703b0f; // Token we provide liquidity with
+    // address public reward = 0x1E4F97b9f9F913c46F1632781732927B9019C68b; // Token we farm and swap to want / lpComponent
 
     address public constant CRV = 0x1E4F97b9f9F913c46F1632781732927B9019C68b;
 
@@ -42,7 +42,7 @@ contract MyStrategy is BaseStrategy {
         IERC20Upgradeable(USDT).approve(CURVE_POOL, type(uint256).max);
         IERC20Upgradeable(WETH).approve(CURVE_POOL, type(uint256).max);
 
-        IERC20Upgradeable(reward).approve(SUSHI_ROUTER, type(uint256).max);
+        IERC20Upgradeable(CRV).approve(SUSHI_ROUTER, type(uint256).max);
         IERC20Upgradeable(WFTM).approve(SUSHI_ROUTER, type(uint256).max);
     }
 
@@ -57,7 +57,7 @@ contract MyStrategy is BaseStrategy {
     function getProtectedTokens() public view virtual override returns (address[] memory) {
         address[] memory protectedTokens = new address[](5);
         protectedTokens[0] = want;
-        protectedTokens[1] = reward;
+        protectedTokens[1] = CRV;
         protectedTokens[2] = USDT;
         protectedTokens[3] = WFTM;
         protectedTokens[4] = gauge;
@@ -98,20 +98,20 @@ contract MyStrategy is BaseStrategy {
         ICurveGauge(gauge).claim_rewards();
 
         // get balance of rewards
-        uint256 rewardAmount = IERC20Upgradeable(reward).balanceOf(address(this));
+        uint256 rewardAmount = IERC20Upgradeable(CRV).balanceOf(address(this));
         uint256 wftmAmount = IERC20Upgradeable(WFTM).balanceOf(address(this));
 
         // If no reward, then return zero amounts
         harvested = new TokenAmount[](2);
         if (rewardAmount == 0 && wftmAmount == 0) {
-            harvested[0] = TokenAmount(reward, 0);
+            harvested[0] = TokenAmount(CRV, 0);
             harvested[1] = TokenAmount(WFTM, 0);
             return harvested;
         }
 
         // Swap CRV to WETH
         if (rewardAmount > 0) {
-            harvested[0] = TokenAmount(reward, rewardAmount);
+            harvested[0] = TokenAmount(CRV, rewardAmount);
 
             address[] memory path = new address[](2);
             path[0] = CRV;
@@ -119,7 +119,7 @@ contract MyStrategy is BaseStrategy {
 
             IUniswapRouterV2(SUSHI_ROUTER).swapExactTokensForTokens(rewardAmount, 0, path, address(this), now);
         } else {
-            harvested[0] = TokenAmount(reward, 0);
+            harvested[0] = TokenAmount(CRV, 0);
         }
 
         // Swap WFTM to USDT
@@ -176,8 +176,8 @@ contract MyStrategy is BaseStrategy {
         rewards = new TokenAmount[](2);
 
         rewards[0] = TokenAmount(
-            reward,
-            IERC20Upgradeable(reward).balanceOf(address(this))
+            CRV,
+            IERC20Upgradeable(CRV).balanceOf(address(this))
         );
         rewards[1] = TokenAmount(
             WFTM,
