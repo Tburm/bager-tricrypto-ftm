@@ -3,6 +3,7 @@
 # UPDATE FROM VAULT STRATEGIST - troyb.eth
 
 ### Links
+* [Zapper Overview](https://zapper.fi/account/0x5927b822d88af38f42711ae4a02edce822e8db6a)
 * [Vault](https://ftmscan.com/address/0x69aa5cf0031ef2ddf1e640b0060afddf5ad720a9)
 * [Strategy](https://ftmscan.com/address/0x5927b822d88af38f42711ae4a02edce822e8db6a)
 
