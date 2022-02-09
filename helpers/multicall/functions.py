@@ -30,6 +30,7 @@ sett = DotMap(
     managementFee="managementFee()(uint256)",
     withdrawalFee="withdrawalFee()(uint256)",
     lastHarvestedAt="lastHarvestedAt()(uint256)",
+    assetsAtLastHarvest="assetsAtLastHarvest()(uint256)",
     performanceFeeGovernance="performanceFeeGovernance()(uint256)",
     performanceFeeStrategist="performanceFeeStrategist()(uint256)",
 )

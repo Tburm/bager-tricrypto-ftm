@@ -1,5 +1,39 @@
-
 # Badger Strategy V1.5 Brownie Mix
+
+# UPDATE FROM VAULT STRATEGIST - troyb.eth
+
+### Links
+* [Zapper Overview](https://zapper.fi/account/0x5927b822d88af38f42711ae4a02edce822e8db6a)
+* [Vault](https://ftmscan.com/address/0x69aa5cf0031ef2ddf1e640b0060afddf5ad720a9)
+* [Strategy](https://ftmscan.com/address/0x5927b822d88af38f42711ae4a02edce822e8db6a)
+
+### Strategy Yield Estimate
+<img width="682" alt="image" src="https://user-images.githubusercontent.com/10401554/153290317-c769eb0c-3344-42a1-829b-a48b2aac3053.png">
+
+At time of writing (2/9/2022):
+* Base vAPY: 4.28%
+* CRV APR: 10.75%
+* wFTM APR: 18.08%
+
+Based on these returns and the benefit of autocompounding, this vault should yield >35% APY until the rewards are diluted from greater deposits.
+
+### Strategy Overview
+At a high level, this strategy is identical to the existing [WBTC-renWBTC](https://docs.badger.com/badger-finance/setts/sett-user-guides-polygon/polygon-amwbtc-renwbtc) strategy on Polygon. The difference is the use of the tricrypto pool, which exposes new risks. Depositors are exposed to fluctuations in the prices of fUSDT, ETH, and WBTC.
+
+* User deposits wBTC, fUSDT, or WETH to the tricrypto pool on [Curve](https://ftm.curve.fi/)
+* User deposits tricrypto LP tokens to Vault
+* Strategy deposits tricrypto LP tokens to the reward gauge
+* Strategy claims staking rewards in CRV and wFTM
+* Strategy sells rewards in high-liquidity pairs (CRV-ETH, wFTM-fUSDT)
+* Strategy adds ETH and fUSDT to the Curve tricrypto pool
+* Strategy deposits tricrypto LP tokens to the reward gauge
+
+### Strategy Testing
+The strategy and vault have been deployed without issue to Fantom Opera mainnet. There were two failing tests that required changes in order to get everything to pass:
+* Fee calculation
+  * I had to add an `approx` function to this test to get it to pass. This test uses python to calculate the value, so there are rounding errors when comparing to BigNumbers from the contract
+* I needed to add some `wait` and `sleep` functions when testing harvests
+* One other test was flakey (failing sometimes) due to some rounding issues with BigNumbers coming from the contract as well.
 
 # WORK IN PROGRESS - USE AT YOUR OWN RISK - See Vaults 1.5 Repo for Audit Reports
 
