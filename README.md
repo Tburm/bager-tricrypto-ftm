@@ -8,6 +8,8 @@
 * [Strategy](https://ftmscan.com/address/0x5927b822d88af38f42711ae4a02edce822e8db6a)
 
 ### Strategy Yield Estimate
+<img width="682" alt="image" src="https://user-images.githubusercontent.com/10401554/153290317-c769eb0c-3344-42a1-829b-a48b2aac3053.png">
+
 At time of writing (2/9/2022):
 * Base vAPY: 4.28%
 * CRV APR: 10.75%
