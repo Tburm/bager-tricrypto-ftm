@@ -12,7 +12,11 @@ class StrategyResolver(StrategyCoreResolver):
         """
         strategy = self.manager.strategy
         return {
-            "gauge": strategy.gauge()
+            "gauge": strategy.gauge(),
+            "pool": strategy.CURVE_POOL(),
+            "crv": strategy.CRV(),
+            "weth": strategy.WETH(),
+            "usdt": strategy.USDT()
         }
 
     def hook_after_confirm_withdraw(self, before, after, params):
@@ -20,7 +24,11 @@ class StrategyResolver(StrategyCoreResolver):
         Specifies extra check for ordinary operation on withdrawal
         Use this to verify that balances in the get_strategy_destinations are properly set
         """
+        # want is withdrawn from the gauge
         assert after.balances("want", "gauge") < before.balances("want", "gauge")
+
+        # strategy balanceOfPool goes down
+        assert after.get("strategy.balanceOfPool") < before.get("strategy.balanceOfPool")
 
     def hook_after_confirm_deposit(self, before, after, params):
         """
@@ -34,7 +42,15 @@ class StrategyResolver(StrategyCoreResolver):
         Specifies extra check for ordinary operation on earn
         Use this to verify that balances in the get_strategy_destinations are properly set
         """
+        # want in the vault goes down
+        assert after.balances("want", "sett") < before.balances("want", "sett")
+
+        # gauge invested by the strategy goes up
+        assert after.get("strategy.balanceOfPool") > before.get("strategy.balanceOfPool")
+
+        # want in the gauge goes up
         assert after.balances("want", "gauge") > before.balances("want", "gauge")
+
 
     def confirm_tend(self, before, after, tx):
         """
@@ -49,17 +65,23 @@ class StrategyResolver(StrategyCoreResolver):
             assert after.get("strategy.balanceOfWant") == 0
             assert after.get("strategy.balanceOfPool") > before.get("strategy.balanceOfPool")
 
-    # def confirm_harvest(self, before, after, tx):
-    # NOTE: Add this in mix 1.5 but comment for tests in main repo
-    #     """
-    #     Verfies that the Harvest produced yield and fees
-    #     """
-    #     console.print("=== Compare Harvest ===")
-    #     self.manager.printCompare(before, after)
-    #     self.confirm_harvest_state(before, after, tx)
+    def confirm_harvest(self, before, after, tx):
+        """
+        Verfies that the Harvest produced yield and fees
+        """
+        console.print("=== Compare Harvest ===")
+        self.manager.printCompare(before, after)
+        self.confirm_harvest_state(before, after, tx)
 
-    #     valueGained = after.get("sett.getPricePerFullShare") > before.get(
-    #         "sett.getPricePerFullShare"
-    #     )
+        valueGained = after.get("sett.getPricePerFullShare") > before.get(
+            "sett.getPricePerFullShare"
+        )
 
-    #     assert True
+        # some value was gained per share
+        assert valueGained
+
+        # the strategy did deposit want in the gauge
+        assert after.get("strategy.balanceOfPool") > before.get("strategy.balanceOfPool")
+
+        # the vault sets a new harvested time
+        assert after.get("sett.lastHarvestedAt") > before.get("sett.lastHarvestedAt")
